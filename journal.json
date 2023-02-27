@@ -1,0 +1,47 @@
+{
+    "0": {
+        "name": "Ilja",
+        "phone_number": "27823867",
+        "city": "Rezekne",
+        "visits": [
+            {
+                "date": "27-02-2023",
+                "hours": 4,
+                "num_of_children": 1,
+                "price": 10
+            },
+            {
+                "date": "27-02-2023",
+                "hours": 1,
+                "num_of_children": 2,
+                "price": 5
+            }
+        ]
+    },
+    "1": {
+        "name": "Oksana",
+        "phone_number": "123123123",
+        "city": "Riga",
+        "visits": [
+            {
+                "date": "27-02-2023",
+                "hours": 2,
+                "num_of_children": 5,
+                "price": 10
+            }
+        ]
+    },
+    "2": {
+        "name": "Timur",
+        "phone_number": "789456132",
+        "city": "Ogre",
+        "visits": [
+            {
+                "date": "27-02-2023",
+                "hours": 0,
+                "num_of_children": 1,
+                "price": 10
+            }
+        ]
+    }
+}
