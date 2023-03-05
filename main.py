@@ -2,11 +2,11 @@ import json
 import datetime
 import sys
 
-with open('journal.json', 'r') as file:
-    try:
+try:
+    with open('journal.json', 'r') as file:
         journal = json.load(file)
-    except json.decoder.JSONDecodeError:
-        journal = {}
+except (json.decoder.JSONDecodeError, FileNotFoundError):
+    journal = {}
 
 
 def print_clients() -> None:
@@ -17,10 +17,19 @@ def print_clients() -> None:
 
 
 def add_client(name: str, phone_number: str, city: str) -> int:
+
+    """
+    Adds a client to journal
+    :param name: Name of client to add to journal
+    :param phone_number: Phone number of client to add to journal
+    :param city: City of client to add to journal
+    :return: ID of client added to journal
+    """
+
     keys = [int(key) for key in journal]
     try:
         client_id = max(keys)
-    except ValueError:
+    except ValueError:  # if keys is an empty sequence (no clients in journal), first client's id is 0
         client_id = 0
     else:
         client_id += 1
@@ -45,13 +54,6 @@ def add_visit(client_id: int, hours: int, num_of_children: int):
     )
 
 
-def is_in_journal(name: str, phone_number: str, city: str):
-    for key in journal:
-        client = journal[key]
-        if all((client.get('name') == name, client.get('phone_number') == phone_number, client.get('city') == city)):
-            return key
-
-
 def print_info(client_id: str):
     client = journal.get(client_id)
     total_hours = sum([visit['hours'] for visit in client['visits']])
@@ -71,27 +73,45 @@ def add_visit_handler():
     print("New client - N")
 
     while True:
-        respone = input('>>> ').lower()
-        if respone == 'n':
+        response = input('>>> ').lower()
+        if response == 'n':
+            # Add new client
             name = input("Name: ")
             phone_number = input("Phone number: ")
             city = input("City: ")
             client_id = add_client(name, phone_number, city)
             break
-        else:
-            try:
-                journal[respone]
+        else:  # if response is not 'n'
+            try:  # check response validity
+                journal[response]
             except KeyError:
                 print('Invalid response')
             else:
-                client_id = respone
+                client_id = response
                 break
-    hours = int(input("Hours: "))
-    num_of_children = int(input("Number of children: "))
+
+    while True:
+        try:
+            hours = int(input("Hours: "))
+        except ValueError:
+            print("Not an integer")
+        else:
+            break
+    while True:
+        try:
+            num_of_children = int(input("Number of children: "))
+        except ValueError:
+            print("Not an integer")
+        else:
+            break
     add_visit(client_id, hours, num_of_children)
 
 
 def print_info_handler():
+    if len(journal) == 0:
+        print("No clients in journal")
+        return
+
     print_clients()
     while True:
         client_id = input('Client ID: ')
