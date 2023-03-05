@@ -9,6 +9,13 @@ with open('journal.json', 'r') as file:
         journal = {}
 
 
+def print_clients() -> None:
+    print('\n')
+    for key in journal:
+        client = journal.get(key)
+        print(f"{client.get('name')}({client.get('phone_number')}, {client.get('city')}) - {key}")
+
+
 def add_client(name: str, phone_number: str, city: str) -> int:
     keys = [int(key) for key in journal]
     try:
@@ -23,6 +30,7 @@ def add_client(name: str, phone_number: str, city: str) -> int:
         "city": city,
         "visits": []
     }
+    print(f'Added client: {name}({phone_number}, {city})')
     return client_id
 
 
@@ -32,7 +40,7 @@ def add_visit(client_id: int, hours: int, num_of_children: int):
             "date": datetime.datetime.today().strftime('%d-%m-%Y'),
             "hours": hours,
             "num_of_children": num_of_children,
-            "price": 5 if hours == 1 else 10
+            "price": 5 if hours <= 1 else 10
         }
     )
 
@@ -44,33 +52,47 @@ def is_in_journal(name: str, phone_number: str, city: str):
             return key
 
 
-def add_visit_handler():
-    name = input("Name: ")
-    phone_number = input("Phone number: ")
-    city = input("City: ")
-    if client_id := is_in_journal(name, phone_number, city):
-        pass
-    else:
-        client_id = add_client(name, phone_number, city)
-    hours = int(input("Hours: "))
-    num_of_children = int(input("Number of children: "))
-    add_visit(client_id, hours, num_of_children)
-
-
 def print_info(client_id: str):
     client = journal.get(client_id)
     total_hours = sum([visit['hours'] for visit in client['visits']])
     total_price = sum([visit['price'] for visit in client['visits']])
     if not client:
         raise KeyError
-    print(f'APMEKLĒTĀJS:\n'
+    print(f'\nAPMEKLĒTĀJS:\n'
           f"{client.get('name')} ({client.get('phone_number')}, {client.get('city')})\n"
           f"Apmeklētas stundas: {total_hours}\n"
           f"Apmeklējumu daudzums: {len(client.get('visits'))}\n"
           f"Apmaksāts: {total_price}\n"
           )
 
+
+def add_visit_handler():
+    print_clients()
+    print("New client - N")
+
+    while True:
+        respone = input('>>> ').lower()
+        if respone == 'n':
+            name = input("Name: ")
+            phone_number = input("Phone number: ")
+            city = input("City: ")
+            client_id = add_client(name, phone_number, city)
+            break
+        else:
+            try:
+                journal[respone]
+            except KeyError:
+                print('Invalid response')
+            else:
+                client_id = respone
+                break
+    hours = int(input("Hours: "))
+    num_of_children = int(input("Number of children: "))
+    add_visit(client_id, hours, num_of_children)
+
+
 def print_info_handler():
+    print_clients()
     while True:
         client_id = input('Client ID: ')
         try:
