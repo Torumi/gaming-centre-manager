@@ -1,3 +1,9 @@
+'''
+TODO [X] Realize VIP clients
+    if total hours >= 50, client is VIP and gets 10% discount for next visits
+'''
+
+
 import json
 import datetime
 import sys
@@ -37,6 +43,7 @@ def add_client(name: str, phone_number: str, city: str) -> int:
         "name": name,
         "phone_number": phone_number,
         "city": city,
+        "vip_status": False,
         "visits": []
     }
     print(f'Added client: {name}({phone_number}, {city})')
@@ -49,24 +56,39 @@ def add_visit(client_id: int, hours: int, num_of_children: int):
             "date": datetime.datetime.today().strftime('%d-%m-%Y'),
             "hours": hours,
             "num_of_children": num_of_children,
-            "price": 5 if hours <= 1 else 10
+            "price": (5 if hours <= 1 else 10) * (0.9 if journal.get(client_id).get("vip_status") else 1)
         }
     )
 
 
 def print_info(client_id: str):
-    client = journal.get(client_id)
+    client = journal[client_id]
     total_hours = sum([visit['hours'] for visit in client['visits']])
     total_price = sum([visit['price'] for visit in client['visits']])
     if not client:
         raise KeyError
     print(f'\nAPMEKLĒTĀJS:\n'
           f"{client.get('name')} ({client.get('phone_number')}, {client.get('city')})\n"
+          f"VIP stastuss: {client.get('vip_status', False)}\n"
           f"Apmeklētas stundas: {total_hours}\n"
           f"Apmeklējumu daudzums: {len(client.get('visits'))}\n"
           f"Apmaksāts: {total_price}\n"
           )
 
+
+def modify_vip(client_id: str):
+    '''
+    Modifies VIP status if client have 50+ total hours and prints info about VIP status
+    :param client_id: ID of client
+    :return: None
+    '''
+    client = journal[client_id]
+    total_hours = sum([visit['hours'] for visit in client['visits']])
+    if total_hours >= 50:
+        print(f"{client.get('name')}({client.get('phone_number')}, {client.get('city')}) is VIP")
+    else:
+        print(f"{client.get('name')}({client.get('phone_number')}, {client.get('city')}) is not VIP")
+    journal[client_id]["vip_status"] = (total_hours >= 50)
 
 def add_visit_handler():
     print_clients()
@@ -105,6 +127,7 @@ def add_visit_handler():
         else:
             break
     add_visit(client_id, hours, num_of_children)
+    modify_vip(client_id)
 
 
 def print_info_handler():

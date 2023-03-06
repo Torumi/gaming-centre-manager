@@ -15,8 +15,27 @@
                 "hours": 1,
                 "num_of_children": 2,
                 "price": 5
+            },
+            {
+                "date": "06-03-2023",
+                "hours": 45,
+                "num_of_children": 1,
+                "price": 10
+            },
+            {
+                "date": "06-03-2023",
+                "hours": 1,
+                "num_of_children": 1,
+                "price": 4.5
+            },
+            {
+                "date": "06-03-2023",
+                "hours": 5,
+                "num_of_children": 1,
+                "price": 9.0
             }
-        ]
+        ],
+        "vip_status": true
     },
     "1": {
         "name": "Oksana",
